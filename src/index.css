@@ -361,6 +361,14 @@ body {
     color: var(--text-dim);
 }
 
+.text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+    margin: 1rem 0;
+    box-shadow: var(--shadow-sm);
+}
+
 /* ========== Suggestions ========== */
 .suggestions {
     display: flex;
@@ -635,4 +643,26 @@ body {
     .input-area {
         padding: 0.5rem 0.75rem 1rem;
     }
+}
+
+/* After .message { margin-bottom: 2.5rem; } */
+.message { margin-bottom: 1.5rem; }   /* override — tighter */
+
+/* User bubble — right side like Claude/ChatGPT */
+.user-message .message-content { flex-direction: row-reverse; }
+.user-message .text {
+    background: var(--glass);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    max-width: 80%;
+}
+.bot-message .text,
+.system-message .text { max-width: 80%; }
+
+/* Smaller image preview in the file chip */
+.file-preview img {
+    max-height: 40px;
+    max-width: 40px;
+    object-fit: cover;
+    border-radius: 4px;
 }

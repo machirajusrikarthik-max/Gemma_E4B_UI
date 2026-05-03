@@ -90,11 +90,31 @@ function App() {
     setInput('');
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
-    // Build user message display
-    const userContent = selectedFile
-      ? `📎 ${selectedFile.name}\n\n${trimmed}`
-      : trimmed;
-    setMessages(prev => [...prev, { role: 'user', content: userContent }]);
+    // Build user message payload
+    const newMessage = { role: 'user', content: trimmed };
+    if (selectedFile) {
+      if (isImageFile(selectedFile)) {
+        try {
+          const dataURL = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('Failed to read image file'));
+            reader.readAsDataURL(selectedFile);
+          });
+          newMessage.image = dataURL;
+          newMessage.fileName = selectedFile.name;
+        } catch (error) {
+          console.error('Error reading image:', error);
+          newMessage.content = `📎 ${selectedFile.name} (preview failed)\n\n${trimmed}`;
+          newMessage.fileName = selectedFile.name;
+        }
+      } else {
+        newMessage.content = `📎 ${selectedFile.name}\n\n${trimmed}`;
+        newMessage.fileName = selectedFile.name;
+      }
+    }
+
+    setMessages(prev => [...prev, newMessage]);
     setIsLoading(true);
 
     try {
@@ -212,7 +232,38 @@ function App() {
                     {m.role === 'user' ? <User size={20} /> : 'G'}
                   </div>
                   <div className="text">
-                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                    {m.image && (
+                      <img
+                        src={m.image}
+                        alt={m.fileName || 'uploaded image'}
+                        style={{
+                          maxWidth: '100%',
+                          height: 'auto',
+                          borderRadius: '8px',
+                          margin: '1rem 0',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                          display: 'block'
+                        }}
+                      />
+                    )}
+                    <ReactMarkdown components={{
+                      img: ({src, alt}) => (
+                        <img
+                          src={src}
+                          alt={alt}
+                          /* was: maxWidth: '100%', height: 'auto' */
+                          style={{
+                            maxWidth: '240px',
+                            maxHeight: '160px',
+                            objectFit: 'cover',
+                            borderRadius: '8px',
+                            margin: '0.5rem 0',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                            display: 'block'
+                          }}
+                        />
+                      )
+                    }}>{m.content}</ReactMarkdown>
                   </div>
                 </div>
               </div>
