@@ -8,7 +8,7 @@ Supports text chat and image uploads in a simple, responsive interface.
 ## ✨ Features
 
 * 💬 Chat interface (`/chat`)
-* 🖼️ Image upload support (`/chat-file`)
+* 🖼️ Image and PDF upload support (`/chat-file`)
 * ✍️ Markdown-rendered responses
 * 📱 Responsive UI
 * ⚡ Fast and minimal design
